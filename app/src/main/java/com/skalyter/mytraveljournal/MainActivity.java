@@ -1,18 +1,26 @@
 package com.skalyter.mytraveljournal;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.Parcel;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.skalyter.mytraveljournal.model.User;
+import com.skalyter.mytraveljournal.ui.login.LoginActivity;
+import com.skalyter.mytraveljournal.util.Constant;
+import com.skalyter.mytraveljournal.util.SharedPreferencesUtil;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -20,6 +28,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.TextView;
+
+import static com.skalyter.mytraveljournal.util.Constant.USER;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +62,18 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        Intent intent = getIntent();
+        if(intent != null){
+            Parcel parcel = intent.getParcelableExtra(USER);
+            if(parcel != null){
+                User user = new User(parcel);
+                TextView username = findViewById(R.id.username);
+                TextView email = findViewById(R.id.email);
+                username.setText(user.getFirstName() + " " + user.getLastName());
+                email.setText(user.getEmail());
+            }
+        }
     }
 
     @Override
@@ -58,6 +81,21 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                SharedPreferencesUtil.setStringValueInSharedPreferences(
+                        this, Constant.ACCOUNT_STATUS, Constant.ACCOUNT_DISCONNECTED);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
