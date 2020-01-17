@@ -53,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:onClick="setTripType"
         app:layout_constraintTop_toBottomOf="@id/caption_radio">
 
         <RadioButton
@@ -65,13 +66,13 @@
             android:id="@+id/radio_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sea Side" />
+            android:text="Mountains" />
 
         <RadioButton
             android:id="@+id/radio_3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mountains" />
+            android:text="Sea Side" />
     </RadioGroup>
 
     <TextView
@@ -123,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="16dp"
+            android:onClick="setStartDate"
             android:text="Start date"
             android:textAlignment="center"
             android:textSize="14sp" />
@@ -133,6 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="16dp"
+            android:onClick="setEndDate"
             android:text="End date"
             android:textAlignment="center"
             android:textSize="14sp" />
