@@ -18,6 +18,9 @@ public interface TripDao {
     @Query("SELECT * FROM trip")
     LiveData<List<Trip>> getAllTrips();
 
+    @Query("SELECT * FROM trip ORDER BY trip.start_date")
+    LiveData<List<Trip>> getAllTripsChronologically();
+
     @Insert
     void insertTrip(Trip trip);
 

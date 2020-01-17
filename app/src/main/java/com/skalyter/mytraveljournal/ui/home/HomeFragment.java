@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
 
         });
 
-        LiveData<List<Trip>> allTripsLiveData = tripDao.getAllTrips();
+        LiveData<List<Trip>> allTripsLiveData = tripDao.getAllTripsChronologically();
         allTripsLiveData.observe(this, trips -> tripList = trips);
 
         recyclerView = view.findViewById(R.id.recycler_view);
