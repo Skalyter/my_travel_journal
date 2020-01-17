@@ -1,8 +1,10 @@
-package com.skalyter.mytraveljournal;
+package com.skalyter.mytraveljournal.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.skalyter.mytraveljournal.R;
 
 public class AddEditTripActivity extends AppCompatActivity {
 

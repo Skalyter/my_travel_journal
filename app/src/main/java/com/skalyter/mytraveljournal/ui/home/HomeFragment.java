@@ -1,8 +1,8 @@
 package com.skalyter.mytraveljournal.ui.home;
 
 import android.content.Intent;
-import android.media.Session2Command;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +12,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skalyter.mytraveljournal.AddEditTripActivity;
-import com.skalyter.mytraveljournal.MainActivity;
+import com.skalyter.mytraveljournal.MyTravelJournalApp;
+import com.skalyter.mytraveljournal.activities.AddEditTripActivity;
 import com.skalyter.mytraveljournal.R;
+import com.skalyter.mytraveljournal.database.AppDatabase;
+import com.skalyter.mytraveljournal.database.TripDao;
 import com.skalyter.mytraveljournal.model.Trip;
 
 import java.util.ArrayList;
@@ -30,8 +33,13 @@ import static android.app.Activity.RESULT_OK;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_EDIT_TRIP;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
     RecyclerView recyclerView;
     CustomAdapter customAdapter;
+
+    private TripDao tripDao;
+    private List<Trip> tripList = new ArrayList<>();
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -40,15 +48,27 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        AppDatabase db = ((MyTravelJournalApp) getActivity().getApplicationContext()).getDatabase();
+        tripDao = db.tripDao();
+
+        db.isDatabaseCreated().observe(this, isDbCreated -> {
+            // React to DB creation event
+
+        });
+
+        LiveData<List<Trip>> allTripsLiveData = tripDao.getAllTrips();
+        allTripsLiveData.observe(this, trips -> tripList = trips);
+
         recyclerView = view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        List<Trip> trips = new ArrayList<>();
-        trips.add(new Trip("Dummy", "Dubai", 450.0,
-                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
-        trips.add(new Trip("Dummy bummy", "Abu Dhabi", 450.0,
-                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
-        customAdapter = new CustomAdapter(trips);
+//        List<Trip> trips = new ArrayList<>();
+//        trips.add(new Trip("Dummy", "Dubai", 450.0,
+//                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
+//        trips.add(new Trip("Dummy bummy", "Abu Dhabi", 450.0,
+//                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
+        customAdapter = new CustomAdapter(tripList);
         recyclerView.setAdapter(customAdapter);
     }
 

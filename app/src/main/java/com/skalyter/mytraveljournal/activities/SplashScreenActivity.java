@@ -1,4 +1,4 @@
-package com.skalyter.mytraveljournal;
+package com.skalyter.mytraveljournal.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

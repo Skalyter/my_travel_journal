@@ -2,18 +2,42 @@ package com.skalyter.mytraveljournal.model;
 
 import android.graphics.Bitmap;
 
-import java.util.Calendar;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.skalyter.mytraveljournal.database.DateConverter;
+import com.skalyter.mytraveljournal.database.TripTypeConverter;
+
+import java.util.Calendar;
+@Entity(tableName = "trip")
 public class Trip {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private Long id;
+
+    @ColumnInfo(name = "name")
     private String name;
+    @ColumnInfo(name = "destination")
     private String destination;
+    @ColumnInfo(name = "price")
     private Double price;
+    @ColumnInfo(name = "start_date")
+    @TypeConverters(DateConverter.class)
     private Calendar startDate;
+    @ColumnInfo(name = "end_date")
+    @TypeConverters(DateConverter.class)
     private Calendar endDate;
+    @ColumnInfo(name = "rating")
     private Float rating;
+    @ColumnInfo(name = "favorite")
     private boolean favorite;
+    @Ignore
     private Bitmap image;
+    @ColumnInfo(name = "type")
+    @TypeConverters(TripTypeConverter.class)
     private TripType type;
 
     public Trip() {

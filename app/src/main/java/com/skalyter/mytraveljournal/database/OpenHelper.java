@@ -1,13 +1,10 @@
-package com.skalyter.mytraveljournal.sqlite;
+package com.skalyter.mytraveljournal.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 public class OpenHelper extends SQLiteOpenHelper {
 //    final Migration MIGRATION_1_2 = new Migration(1, 2) {

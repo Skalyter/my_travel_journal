@@ -1,4 +1,4 @@
-package com.skalyter.mytraveljournal;
+package com.skalyter.mytraveljournal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import android.os.Parcel;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,7 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.skalyter.mytraveljournal.model.User;
+import com.skalyter.mytraveljournal.R;
 import com.skalyter.mytraveljournal.ui.login.LoginActivity;
 import com.skalyter.mytraveljournal.util.Constant;
 import com.skalyter.mytraveljournal.util.SharedPreferencesUtil;
@@ -30,10 +29,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.TextView;
 
-import static com.skalyter.mytraveljournal.util.Constant.USER;
 import static com.skalyter.mytraveljournal.util.Constant.USER_FIRST_NAME;
 import static com.skalyter.mytraveljournal.util.Constant.USER_LAST_NAME;
-import static com.skalyter.mytraveljournal.util.SharedPreferencesUtil.getStringValueFromSharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 

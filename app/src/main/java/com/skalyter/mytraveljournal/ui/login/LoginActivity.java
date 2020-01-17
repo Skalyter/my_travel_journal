@@ -23,18 +23,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.skalyter.mytraveljournal.MainActivity;
+import com.skalyter.mytraveljournal.activities.MainActivity;
 import com.skalyter.mytraveljournal.R;
-import com.skalyter.mytraveljournal.SplashScreenActivity;
-import com.skalyter.mytraveljournal.model.User;
-import com.skalyter.mytraveljournal.ui.login.LoginViewModel;
-import com.skalyter.mytraveljournal.ui.login.LoginViewModelFactory;
-import com.skalyter.mytraveljournal.util.Constant;
 import com.skalyter.mytraveljournal.util.SharedPreferencesUtil;
 
 import static com.skalyter.mytraveljournal.util.Constant.ACCOUNT_CONNECTED;
 import static com.skalyter.mytraveljournal.util.Constant.ACCOUNT_STATUS;
-import static com.skalyter.mytraveljournal.util.Constant.USER;
 import static com.skalyter.mytraveljournal.util.Constant.USER_EMAIL;
 import static com.skalyter.mytraveljournal.util.Constant.USER_FIRST_NAME;
 import static com.skalyter.mytraveljournal.util.Constant.USER_LAST_NAME;
