@@ -77,7 +77,7 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeLong(id);
+        if(id!=null) parcel.writeLong(id);
         parcel.writeString(email);
         parcel.writeString(firstName);
         parcel.writeString(lastName);

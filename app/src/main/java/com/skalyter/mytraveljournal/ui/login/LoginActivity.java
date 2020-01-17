@@ -33,7 +33,12 @@ import com.skalyter.mytraveljournal.util.Constant;
 import com.skalyter.mytraveljournal.util.SharedPreferencesUtil;
 
 import static com.skalyter.mytraveljournal.util.Constant.ACCOUNT_CONNECTED;
+import static com.skalyter.mytraveljournal.util.Constant.ACCOUNT_STATUS;
 import static com.skalyter.mytraveljournal.util.Constant.USER;
+import static com.skalyter.mytraveljournal.util.Constant.USER_EMAIL;
+import static com.skalyter.mytraveljournal.util.Constant.USER_FIRST_NAME;
+import static com.skalyter.mytraveljournal.util.Constant.USER_LAST_NAME;
+import static com.skalyter.mytraveljournal.util.Constant.USER_PASSWORD;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -140,13 +145,15 @@ public class LoginActivity extends AppCompatActivity {
 
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        User user = new User(null,  loginViewModel.getEmail(), loginViewModel.getFirstName(),
-                loginViewModel.getLastName(), loginViewModel.getPassword());
+        //TODO store user in DB and validate login/register
 
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        intent.putExtra(USER, user);
         SharedPreferencesUtil.setStringValueInSharedPreferences(this,
-                Constant.ACCOUNT_STATUS, ACCOUNT_CONNECTED);
+                ACCOUNT_STATUS, ACCOUNT_CONNECTED);
+        SharedPreferencesUtil.setStringValueInSharedPreferences(this, USER_EMAIL, model.getEmail());
+        SharedPreferencesUtil.setStringValueInSharedPreferences(this, USER_FIRST_NAME, model.getFirstName());
+        SharedPreferencesUtil.setStringValueInSharedPreferences(this, USER_LAST_NAME, model.getLastName());
+        SharedPreferencesUtil.setStringValueInSharedPreferences(this, USER_PASSWORD, model.getPassword());
         startActivity(intent);
         finish();
     }

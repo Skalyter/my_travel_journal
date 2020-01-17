@@ -4,16 +4,15 @@ package com.skalyter.mytraveljournal.ui.login;
  * Class exposing authenticated user details to the UI.
  */
 class LoggedInUserView {
-    private String displayName;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     //... other data fields that may be accessible to the UI
 
-    LoggedInUserView(String displayName) {
-        this.displayName = displayName;
-    }
+//    LoggedInUserView(String displayName) {
+//        this.displayName = displayName;
+//    }
 
     LoggedInUserView(String email, String firstName, String lastName, String password){
         this.email = email;
@@ -23,7 +22,7 @@ class LoggedInUserView {
     }
 
     String getDisplayName() {
-        return displayName;
+        return firstName + " " + lastName;
     }
 
     String getFirstName() {

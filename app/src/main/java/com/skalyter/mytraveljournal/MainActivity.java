@@ -31,6 +31,9 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import static com.skalyter.mytraveljournal.util.Constant.USER;
+import static com.skalyter.mytraveljournal.util.Constant.USER_FIRST_NAME;
+import static com.skalyter.mytraveljournal.util.Constant.USER_LAST_NAME;
+import static com.skalyter.mytraveljournal.util.SharedPreferencesUtil.getStringValueFromSharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,16 +66,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        Intent intent = getIntent();
-        if(intent != null){
-            Parcel parcel = intent.getParcelableExtra(USER);
-            if(parcel != null){
-                User user = new User(parcel);
-                TextView username = findViewById(R.id.username);
-                TextView email = findViewById(R.id.email);
-                username.setText(user.getFirstName() + " " + user.getLastName());
-                email.setText(user.getEmail());
-            }
+        String userEmail = SharedPreferencesUtil.getStringValueFromSharedPreferences(this, Constant.USER_EMAIL);
+        String userFirstName = SharedPreferencesUtil.getStringValueFromSharedPreferences(this, USER_FIRST_NAME);
+        String userLastName = SharedPreferencesUtil.getStringValueFromSharedPreferences(this, USER_LAST_NAME);
+        if (userFirstName.length() > 0 && userLastName.length() > 0) {
+            TextView username = navigationView.getHeaderView(0).findViewById(R.id.username);
+            username.setText(userFirstName + " " + userLastName);
+        }
+        if (userEmail.length() > 0) {
+            TextView email = navigationView.getHeaderView(0).findViewById(R.id.email);
+            email.setText(userEmail);
         }
     }
 

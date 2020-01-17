@@ -56,7 +56,8 @@ public class LoginViewModel extends ViewModel {
             this.firstName = firstName;
             this.lastName = lastName;
             this.password = password;
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+            loginResult.setValue(new LoginResult(new LoggedInUserView(username, firstName,
+                    lastName, password)));
         } else {
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }

@@ -18,22 +18,23 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Intent intent;
         if(SharedPreferencesUtil
                 .getStringValueFromSharedPreferences(
                         this, ACCOUNT_STATUS).equals(ACCOUNT_CONNECTED)) {
-            final Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(intent);
-                    finish();
-                }
-            }, 2000);
+            intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
         } else {
-            final Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+
         }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(intent);
+                finish();
+            }
+        }, 1000);
     }
 }
