@@ -1,16 +1,20 @@
 package com.skalyter.mytraveljournal.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatRatingBar;
-
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,6 +22,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatRatingBar;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.skalyter.mytraveljournal.R;
@@ -26,18 +36,22 @@ import com.skalyter.mytraveljournal.model.Trip;
 import com.skalyter.mytraveljournal.model.TripType;
 import com.skalyter.mytraveljournal.util.Util;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 import static com.skalyter.mytraveljournal.util.Constant.REQ_CAMERA;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_GALLERY;
+import static com.skalyter.mytraveljournal.util.Util.rotateImage;
 
 public class AddEditTripActivity extends AppCompatActivity {
 
-    private TextInputEditText name, destination;
+    private TextInputEditText name, destination, priceValue;
     private RadioButton radio1, radio2, radio3;
     private RadioGroup radio;
     private SeekBar priceSlider;
-    private TextView priceValue, startDate, endDate, startDateValue, endDateValue;
+    private TextView startDate, endDate, startDateValue, endDateValue;
     private AppCompatRatingBar ratingBar;
     private Button imageButton;
     private ImageView imageView;
@@ -102,6 +116,27 @@ public class AddEditTripActivity extends AppCompatActivity {
             }
         });
 
+        priceValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(priceValue.getText().length()>1)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        priceSlider.setProgress(Integer.parseInt(priceValue.getText().toString()), true);
+                    } else {
+                        priceSlider.setProgress(Integer.parseInt(priceValue.getText().toString()));
+                    }
+                priceValue.setSelection(priceValue.getText().length());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         startDateSetListener = (datePicker, year, month, date) -> {
             calendarStart = Calendar.getInstance();
             calendarStart.set(year, month, date);
@@ -126,6 +161,7 @@ public class AddEditTripActivity extends AppCompatActivity {
             endDateValue.setVisibility(View.VISIBLE);
             endDateValue.setText(Util.getStringFromCalendar(calendarEnd));
         };
+
     }
 
     public void setTripType(View view) {
@@ -169,7 +205,7 @@ public class AddEditTripActivity extends AppCompatActivity {
 
     public void chooseImage(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select an action");
+        builder.setTitle("Select an action").setCancelable(true);
         String[] options = {"Choose from Gallery", "Take a picture"};
         builder.setItems(options, (dialogInterface, i) -> {
             switch (i) {
@@ -186,6 +222,65 @@ public class AddEditTripActivity extends AppCompatActivity {
                     break;
             }
         });
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
+
+    public void save(View view){
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_GALLERY && resultCode == Activity.RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                imageView.setImageBitmap(selectedImage);
+                imageView.setVisibility(View.VISIBLE);
+                //TODO: store the image in InternalMemory(/External w/e)
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(AddEditTripActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+            }
+        }
+        if (requestCode == REQ_CAMERA && resultCode == RESULT_OK) {
+            final Uri imageUri = data.getData();
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            try {
+                InputStream inputStream;
+                if (imageUri != null) {
+                    inputStream = getContentResolver().openInputStream(imageUri);
+                    ExifInterface ei = new ExifInterface(inputStream);
+                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_UNDEFINED);
+
+                    switch (orientation) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            photo = rotateImage(photo, 90);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            photo = rotateImage(photo, 180);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            photo = rotateImage(photo, 270);
+                            break;
+
+                        case ExifInterface.ORIENTATION_NORMAL:
+                        default:
+                            break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            imageView.setImageBitmap(photo);
+            imageView.setVisibility(View.VISIBLE);
+        }
+    }
+
 }

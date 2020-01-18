@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
     private TripDao tripDao;
     private List<Trip> tripList = new ArrayList<>();
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -51,11 +52,6 @@ public class HomeFragment extends Fragment {
 
         AppDatabase db = ((MyTravelJournalApp) getActivity().getApplicationContext()).getDatabase();
         tripDao = db.tripDao();
-
-        db.isDatabaseCreated().observe(this, isDbCreated -> {
-            // React to DB creation event
-
-        });
 
         LiveData<List<Trip>> allTripsLiveData = tripDao.getAllTripsChronologically();
         allTripsLiveData.observe(this, trips -> tripList = trips);
