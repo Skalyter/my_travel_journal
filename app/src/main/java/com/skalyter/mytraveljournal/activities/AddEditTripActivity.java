@@ -3,10 +3,14 @@ package com.skalyter.mytraveljournal.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRatingBar;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,6 +27,9 @@ import com.skalyter.mytraveljournal.model.TripType;
 import com.skalyter.mytraveljournal.util.Util;
 
 import java.util.Calendar;
+
+import static com.skalyter.mytraveljournal.util.Constant.REQ_CAMERA;
+import static com.skalyter.mytraveljournal.util.Constant.REQ_GALLERY;
 
 public class AddEditTripActivity extends AppCompatActivity {
 
@@ -158,5 +165,27 @@ public class AddEditTripActivity extends AppCompatActivity {
                 calendarEnd.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         datePickerDialog.show();
+    }
+
+    public void chooseImage(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select an action");
+        String[] options = {"Choose from Gallery", "Take a picture"};
+        builder.setItems(options, (dialogInterface, i) -> {
+            switch (i) {
+                case 0:
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, REQ_GALLERY);
+                    break;
+                case 1:
+                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(takePicture, REQ_CAMERA);
+                    break;
+                default:
+                    break;
+            }
+        });
+        builder.show();
     }
 }
