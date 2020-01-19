@@ -14,7 +14,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,10 +28,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRatingBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.skalyter.mytraveljournal.MyTravelJournalApp;
 import com.skalyter.mytraveljournal.R;
+import com.skalyter.mytraveljournal.database.AppDatabase;
 import com.skalyter.mytraveljournal.database.TripDao;
 import com.skalyter.mytraveljournal.model.Trip;
 import com.skalyter.mytraveljournal.model.TripType;
@@ -43,6 +47,7 @@ import java.util.Calendar;
 
 import static com.skalyter.mytraveljournal.util.Constant.REQ_CAMERA;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_GALLERY;
+import static com.skalyter.mytraveljournal.util.Util.isBefore;
 import static com.skalyter.mytraveljournal.util.Util.rotateImage;
 
 public class AddEditTripActivity extends AppCompatActivity {
@@ -67,15 +72,14 @@ public class AddEditTripActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_trip);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
-//        setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setResult(RESULT_CANCELED);
-//                finish();
-//            }
-//        });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle("Add / Edit trip");
+        toolbar.setNavigationOnClickListener(v -> {
+            setResult(RESULT_CANCELED);
+            finish();
+        });
         name = findViewById(R.id.input_trip_name);
         destination = findViewById(R.id.input_trip_destination);
 
@@ -282,5 +286,61 @@ public class AddEditTripActivity extends AppCompatActivity {
             imageView.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_edit_trip, menu);
+        return true;
+    }
+
+    public void save(MenuItem item) {
+        //TODO: save the trip into DB
+        String name = this.name.getText().toString();
+        String destination = this.destination.getText().toString();
+        Double price = (double)priceSlider.getProgress();
+        Float rating = ratingBar.getRating();
+        //TODO save the image into storage
+        if(name.isEmpty() || name == null) {
+            this.name.setError("Please fill in the name");
+            return;
+        } else {
+            trip.setName(name);
+        }
+        if(destination.isEmpty() || destination == null){
+            this.destination.setError("Please fill in the destination");
+            return;
+        } else {
+            trip.setDestination(destination);
+        }
+        if(isBefore(calendarStart, calendarEnd)){
+            trip.setStartDate(calendarStart);
+            trip.setEndDate(calendarEnd);
+        } else {
+            Toast.makeText(this, "Double check the dates :)", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(rating != 0){
+            trip.setRating(rating);
+        }
+        if(radio.getCheckedRadioButtonId() != -1){
+            switch (radio.getCheckedRadioButtonId()){
+                case R.id.radio_1:
+                    trip.setType(TripType.CITYBREAK);
+                    break;
+                case R.id.radio_2:
+                    trip.setType(TripType.MOUNTAIN);
+                    break;
+                case R.id.radio_3:
+                    trip.setType(TripType.SEASIDE);
+            }
+        } else{
+            Toast.makeText(this, "Select a trip type", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        AppDatabase db = ((MyTravelJournalApp) getApplicationContext()).getDatabase();
+        db.tripDao().insertTrip(trip);
+        Toast.makeText(this, "Trip added successfully", Toast.LENGTH_SHORT).show();
+    }
+
 
 }

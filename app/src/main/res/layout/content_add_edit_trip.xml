@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_add_edit_trip"
+    tools:context=".activities.AddEditTripActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_trip_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Trip name" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/input_1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_trip_destination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Destination" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/caption_radio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/radio"
+            android:text="Trip type"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/input_2" />
+
+        <RadioGroup
+            android:id="@+id/radio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="setTripType"
+            app:layout_constraintTop_toBottomOf="@id/caption_radio">
+
+            <RadioButton
+                android:id="@+id/radio_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="City Break" />
+
+            <RadioButton
+                android:id="@+id/radio_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mountains" />
+
+            <RadioButton
+                android:id="@+id/radio_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sea Side" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/slider_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/input_price_slider"
+            android:text="Price (€):"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/radio" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/slider_caption"
+            app:layout_constraintStart_toEndOf="@id/slider_caption"
+            app:layout_constraintTop_toBottomOf="@id/radio">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_price_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:inputType="number"
+
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/slider_caption"
+                app:layout_constraintStart_toEndOf="@id/slider_caption"
+                app:layout_constraintTop_toBottomOf="@id/radio"
+                tools:text="430" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <SeekBar
+            android:id="@+id/input_price_slider"
+            style="@style/Widget.AppCompat.SeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hapticFeedbackEnabled="true"
+            android:max="5000"
+            android:min="10"
+            app:layout_constraintTop_toBottomOf="@id/slider_caption"
+            tools:targetApi="o" />
+
+        <LinearLayout
+            android:id="@+id/linear_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/input_price_slider">
+
+            <TextView
+                android:id="@+id/input_start_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setStartDate"
+                android:padding="16dp"
+                android:text="Start date"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/input_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setEndDate"
+                android:padding="16dp"
+                android:text="End date"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/linear_1">
+
+            <TextView
+                android:id="@+id/value_start_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setStartDate"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                tools:text="Start date" />
+
+            <TextView
+                android:id="@+id/value_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setEndDate"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                tools:text="End date" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/label_rating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/input_rating"
+            android:text="Rating"
+            app:layout_constraintTop_toBottomOf="@id/linear_2" />
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:id="@+id/input_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_rating" />
+
+        <Button
+            android:id="@+id/button_image"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="chooseImage"
+            android:text="Select an image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_rating" />
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_image" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
