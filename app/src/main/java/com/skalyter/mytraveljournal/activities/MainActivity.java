@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
@@ -18,7 +16,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.skalyter.mytraveljournal.MyTravelJournalApp;
 import com.skalyter.mytraveljournal.R;
-import com.skalyter.mytraveljournal.database.AppDatabase;
 import com.skalyter.mytraveljournal.ui.login.LoginActivity;
 import com.skalyter.mytraveljournal.util.Constant;
 import com.skalyter.mytraveljournal.util.SharedPreferencesUtil;
@@ -40,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppDatabase db = ((MyTravelJournalApp) getApplicationContext()).getDatabase();
-        db.isDatabaseCreated().observe(this, isDbCreated -> {
-            // React to DB creation event
-
-        });
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

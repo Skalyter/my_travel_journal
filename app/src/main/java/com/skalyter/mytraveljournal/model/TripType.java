@@ -20,4 +20,14 @@ public enum TripType {
     public Integer getKey() {
         return key;
     }
+
+    public static TripType getType(int key){
+        if(key ==1) {
+            return TripType.CITYBREAK;
+        }
+        if(key == 2){
+            return TripType.MOUNTAIN;
+        }
+        return TripType.SEASIDE;
+    }
 }

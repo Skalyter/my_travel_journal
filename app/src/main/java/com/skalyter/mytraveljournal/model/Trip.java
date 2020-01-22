@@ -1,43 +1,19 @@
 package com.skalyter.mytraveljournal.model;
 
-import android.graphics.Bitmap;
-
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-
-import com.skalyter.mytraveljournal.database.DateConverter;
-import com.skalyter.mytraveljournal.database.TripTypeConverter;
+import android.net.Uri;
 
 import java.util.Calendar;
-@Entity(tableName = "trip")
-public class Trip {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private Long id;
 
-    @ColumnInfo(name = "name")
+public class Trip {
+    private Long id;
     private String name;
-    @ColumnInfo(name = "destination")
     private String destination;
-    @ColumnInfo(name = "price")
     private Double price;
-    @ColumnInfo(name = "start_date")
-    @TypeConverters(DateConverter.class)
     private Calendar startDate;
-    @ColumnInfo(name = "end_date")
-    @TypeConverters(DateConverter.class)
     private Calendar endDate;
-    @ColumnInfo(name = "rating")
     private Float rating;
-    @ColumnInfo(name = "favorite")
     private boolean favorite;
-    @Ignore
-    private Bitmap image;
-    @ColumnInfo(name = "type")
-    @TypeConverters(TripTypeConverter.class)
+    private Uri imageUri;
     private TripType type;
 
     public Trip() {
@@ -130,12 +106,12 @@ public class Trip {
         this.favorite = favorite;
     }
 
-    public Bitmap getImage() {
-        return image;
+    public Uri getImageUri() {
+        return imageUri;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = image;
+    public void setImage(Uri imageUri) {
+        this.imageUri = imageUri;
     }
 
     public TripType getType() {

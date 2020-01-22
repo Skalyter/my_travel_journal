@@ -2,7 +2,6 @@ package com.skalyter.mytraveljournal.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,33 +12,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skalyter.mytraveljournal.MyTravelJournalApp;
 import com.skalyter.mytraveljournal.activities.AddEditTripActivity;
 import com.skalyter.mytraveljournal.R;
-import com.skalyter.mytraveljournal.database.AppDatabase;
 import com.skalyter.mytraveljournal.database.TripDao;
 import com.skalyter.mytraveljournal.model.Trip;
+import com.skalyter.mytraveljournal.model.TripType;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.skalyter.mytraveljournal.util.Constant.INTENT_TRIP_ID;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_EDIT_TRIP;
 
 public class HomeFragment extends Fragment {
-    private static final String TAG = "HomeFragment";
-    RecyclerView recyclerView;
-    CustomAdapter customAdapter;
+    private RecyclerView recyclerView;
+    private CustomAdapter customAdapter;
 
     private TripDao tripDao;
     private List<Trip> tripList = new ArrayList<>();
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -49,21 +44,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        AppDatabase db = ((MyTravelJournalApp) getActivity().getApplicationContext()).getDatabase();
-        tripDao = db.tripDao();
-
-        LiveData<List<Trip>> allTripsLiveData = tripDao.getAllTripsChronologically();
-        allTripsLiveData.observe(this, trips -> tripList = trips);
-
+        tripDao = new TripDao(getContext());
         recyclerView = view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-//        List<Trip> trips = new ArrayList<>();
-//        trips.add(new Trip("Dummy", "Dubai", 450.0,
-//                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
-//        trips.add(new Trip("Dummy bummy", "Abu Dhabi", 450.0,
-//                Calendar.getInstance(), Calendar.getInstance(), 4.5f, false));
+
+        tripList = tripDao.getAllTripsChronologically();
         customAdapter = new CustomAdapter(tripList);
         recyclerView.setAdapter(customAdapter);
     }
@@ -87,7 +73,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
             final Trip trip =tripList.get(position);
-            holder.image.setImageBitmap(trip.getImage());
+            //if(trip.getImageUri() != null) holder.image.setImageURI(trip.getImageUri());
             holder.name.setText(trip.getName());
             holder.destination.setText(trip.getDestination());
             holder.price.setText(trip.getPrice() + "€");
@@ -97,33 +83,26 @@ public class HomeFragment extends Fragment {
                 holder.ratingImage.setVisibility(View.GONE);
                 holder.rating.setVisibility(View.GONE);
             }
-            holder.favorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO: store values in DB
-                    if(trip.isFavorite()) {
-                        holder.favorite.setImageResource(R.drawable.ic_favorite_border_red);
-                        trip.setFavorite(false);
-                    } else {
-                        holder.favorite.setImageResource(R.drawable.ic_favorite_red);
-                        trip.setFavorite(true);
-                    }
+            holder.favorite.setOnClickListener(view -> {
+                if(trip.isFavorite()) {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite_border_red);
+                    tripList.get(position).setFavorite(false);
+                    trip.setFavorite(false);
+                } else {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite_red);
+                    tripList.get(position).setFavorite(true);
+                    trip.setFavorite(true);
                 }
+                tripDao.updateTrip(trip);
             });
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO: start TripDetails activity
-                }
+            holder.itemView.setOnClickListener(view -> {
+                //TODO: start TripDetails activity
             });
-            holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    //TODO: start EditTrip activity
-                    Intent intent = new Intent(getContext(), AddEditTripActivity.class);
-                    startActivityForResult(intent, REQ_EDIT_TRIP);
-                    return true;
-                }
+            holder.cardView.setOnLongClickListener(view -> {
+                Intent intent = new Intent(getContext(), AddEditTripActivity.class);
+                intent.putExtra(INTENT_TRIP_ID, trip.getId());
+                startActivityForResult(intent, REQ_EDIT_TRIP);
+                return true;
             });
         }
 
@@ -156,7 +135,17 @@ public class HomeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQ_EDIT_TRIP && resultCode == RESULT_OK){
-            customAdapter.notifyDataSetChanged();
+//            tripList = tripDao.getAllTripsChronologically();
+//            customAdapter = new CustomAdapter(tripList);
+//            recyclerView.setAdapter(customAdapter);t
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        tripList = tripDao.getAllTripsChronologically();
+        customAdapter = new CustomAdapter(tripList);
+        recyclerView.setAdapter(customAdapter);
     }
 }

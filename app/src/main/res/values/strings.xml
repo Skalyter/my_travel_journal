@@ -24,4 +24,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="prompt_firstName">First name</string>
     <string name="prompt_lastName">Last name</string>
+    <string name="title_activity_details">DetailsActivity</string>
 </resources>

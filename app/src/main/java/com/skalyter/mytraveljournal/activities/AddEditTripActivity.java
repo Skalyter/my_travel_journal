@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,9 +33,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.skalyter.mytraveljournal.MyTravelJournalApp;
 import com.skalyter.mytraveljournal.R;
-import com.skalyter.mytraveljournal.database.AppDatabase;
 import com.skalyter.mytraveljournal.database.TripDao;
 import com.skalyter.mytraveljournal.model.Trip;
 import com.skalyter.mytraveljournal.model.TripType;
@@ -45,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import static com.skalyter.mytraveljournal.util.Constant.INTENT_TRIP_ID;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_CAMERA;
 import static com.skalyter.mytraveljournal.util.Constant.REQ_GALLERY;
 import static com.skalyter.mytraveljournal.util.Util.isBefore;
@@ -63,6 +63,7 @@ public class AddEditTripActivity extends AppCompatActivity {
 
     private Trip trip;
     private TripDao tripDao;
+    private long id;
 
     private Calendar calendarStart = Calendar.getInstance();
     private Calendar calendarEnd = Calendar.getInstance();
@@ -101,7 +102,29 @@ public class AddEditTripActivity extends AppCompatActivity {
         imageButton = findViewById(R.id.button_image);
         imageView = findViewById(R.id.image);
 
-        trip = new Trip();
+        tripDao = new TripDao(this);
+
+        id = getIntent().getLongExtra(INTENT_TRIP_ID, -1);
+        if(id != -1){
+            trip = tripDao.getTrip(id);
+            name.setText(trip.getName());
+            destination.setText(trip.getDestination());
+            if(trip.getType().getKey()==0){
+                radio1.setChecked(true);
+            } else if(trip.getType().getKey() == 1){
+                radio2.setChecked(true);
+            } else{
+                radio3.setChecked(true);
+            }
+            priceValue.setText(trip.getPrice().toString());
+            priceSlider.setProgress((int)Math.floor(trip.getPrice()));
+            startDateValue.setText(Util.getStringFromCalendar(trip.getStartDate()));
+            endDateValue.setText(Util.getStringFromCalendar(trip.getEndDate()));
+            ratingBar.setProgress((int)Math.ceil(trip.getRating()*2));
+            //imageView.setImageURI();
+        } else {
+            trip = new Trip();
+        }
         priceSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -228,6 +251,7 @@ public class AddEditTripActivity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+
     }
 
     public void save(View view){
@@ -244,7 +268,7 @@ public class AddEditTripActivity extends AppCompatActivity {
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 imageView.setImageBitmap(selectedImage);
                 imageView.setVisibility(View.VISIBLE);
-                //TODO: store the image in InternalMemory(/External w/e)
+                trip.setImage(imageUri);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(AddEditTripActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -252,6 +276,9 @@ public class AddEditTripActivity extends AppCompatActivity {
         }
         if (requestCode == REQ_CAMERA && resultCode == RESULT_OK) {
             final Uri imageUri = data.getData();
+            Log.d("DEBUG", "onActivityResult: " + imageUri.toString());
+            trip.setImage(imageUri);
+            //TODO: store the image in InternalMemory(/External w/e)
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             try {
                 InputStream inputStream;
@@ -312,7 +339,9 @@ public class AddEditTripActivity extends AppCompatActivity {
         } else {
             trip.setDestination(destination);
         }
-        if(isBefore(calendarStart, calendarEnd)){
+        if(isBefore(calendarStart, calendarEnd)
+                && trip.getStartDate()!=null
+                && trip.getEndDate() != null){
             trip.setStartDate(calendarStart);
             trip.setEndDate(calendarEnd);
         } else {
@@ -337,10 +366,19 @@ public class AddEditTripActivity extends AppCompatActivity {
             Toast.makeText(this, "Select a trip type", Toast.LENGTH_SHORT).show();
             return;
         }
-        AppDatabase db = ((MyTravelJournalApp) getApplicationContext()).getDatabase();
-        db.tripDao().insertTrip(trip);
-        Toast.makeText(this, "Trip added successfully", Toast.LENGTH_SHORT).show();
+        if(price == null){
+            priceValue.setError("Please enter the price.");
+        } else {
+            trip.setPrice(price);
+        }
+        if(id != -1){
+            tripDao.updateTrip(trip);
+            Toast.makeText(this, "Trip updated successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            trip.setId(tripDao.insertTrip(trip));
+            Toast.makeText(this, "Trip added successfully", Toast.LENGTH_SHORT).show();
+        }
+        setResult(RESULT_OK);
+        finish();
     }
-
-
 }

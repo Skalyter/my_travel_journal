@@ -13,4 +13,6 @@ public class Constant {
     public static final int REQ_EDIT_TRIP = 101;
     public static final int REQ_GALLERY = 102;
     public static final int REQ_CAMERA = 103;
+
+    public static final String INTENT_TRIP_ID = "trip_id";
 }

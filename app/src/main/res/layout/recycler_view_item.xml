@@ -16,7 +16,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
 
         <ImageView
             android:id="@+id/item_image"
@@ -26,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_logo" />
+            android:src="@drawable/desert" />
 
         <TextView
             android:id="@+id/item_name"
